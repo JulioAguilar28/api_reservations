@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+//////////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////////
+
+enum RoleName {
+  CLIENT
+  ADMIN
+}
+
+enum ClassStatus {
+  SCHEDULED
+  FULL
+  CANCELLED
+  FINISHED
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+enum RestrictionType {
+  LATE_CANCEL
+}
+
+enum NotificationType {
+  RES_CONFIRM
+  CLASS_CANCEL
+  RES_CANCEL
+}
+
+//////////////////////////////////////////////////////
+// MODELS
+//////////////////////////////////////////////////////
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  name      RoleName @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Char(36)
+  roleId    Int
+  fullName  String   @db.VarChar(150)
+  email     String   @unique @db.VarChar(191)
+  phone     String   @db.VarChar(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  role           Role              @relation(fields: [roleId], references: [id])
+  classesCreated Class[]           @relation("AdminClasses")
+  reservations   Reservation[]
+  restrictions   UserRestriction[]
+}
+
+model Class {
+  id          String      @id @default(uuid()) @db.Char(36)
+  createdBy   String      @db.Char(36)
+  title       String      @db.VarChar(150)
+  description String?     @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  maxCapacity Int
+  status      ClassStatus @default(SCHEDULED)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  admin        User          @relation("AdminClasses", fields: [createdBy], references: [id])
+  reservations Reservation[]
+
+  @@index([startTime])
+  @@index([status])
+}
+
+model Reservation {
+  id         String            @id @default(uuid()) @db.Char(36)
+  userId     String            @db.Char(36)
+  classId    String            @db.Char(36)
+  status     ReservationStatus @default(CONFIRMED)
+  reservedAt DateTime          @default(now())
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  class        Class         @relation(fields: [classId], references: [id])
+  cancellation Cancellation?
+
+  @@unique([userId, classId])
+  @@index([classId])
+  @@index([status])
+}
+
+model Cancellation {
+  id             String   @id @default(uuid()) @db.Char(36)
+  reservationId  String   @unique @db.Char(36)
+  cancelledAt    DateTime @default(now())
+  penaltyApplied Boolean  @default(false)
+  reason         String?  @db.Text
+
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+}
+
+model UserRestriction {
+  id              String          @id @default(uuid()) @db.Char(36)
+  userId          String          @db.Char(36)
+  restrictionType RestrictionType
+  startDate       DateTime        @default(now())
+  endDate         DateTime
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isActive])
+}
