@@ -50,3 +50,15 @@ db-push:
 # ===============================
 shell:
 	$(DOCKER_COMPOSE) exec $(SERVICE_APP) sh
+
+# ===============================
+# Ejecutar migración de Prisma
+# Uso:
+# make migrate NAME=nombre_migracion
+# ===============================
+migrate:
+	@if [ -z "$(NAME)" ]; then \
+		echo "❌ Debes proporcionar un nombre: make migrate NAME=nombre_migracion"; \
+		exit 1; \
+	fi
+	docker compose exec app npx prisma migrate dev --name $(NAME)
