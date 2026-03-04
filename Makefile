@@ -61,4 +61,10 @@ migrate:
 		echo "❌ Debes proporcionar un nombre: make migrate NAME=nombre_migracion"; \
 		exit 1; \
 	fi
-	docker compose exec app npx prisma migrate dev --name $(NAME)
+	$(DOCKER_COMPOSE) exec $(SERVICE_APP) npx prisma migrate dev --name $(NAME)
+
+# ===============================
+# Ejecutar seed para base de datos
+# ===============================
+seed:
+	$(DOCKER_COMPOSE) exec $(SERVICE_APP) npx prisma db seed
