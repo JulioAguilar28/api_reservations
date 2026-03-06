@@ -64,6 +64,12 @@ migrate:
 	$(DOCKER_COMPOSE) exec $(SERVICE_APP) npx prisma migrate dev --name $(NAME)
 
 # ===============================
+# Ejecutar migraciones existentes
+# ===============================
+migrate-deploy:
+	$(DOCKER_COMPOSE) exec $(SERVICE_APP) npx prisma migrate deploy
+
+# ===============================
 # Ejecutar seed para base de datos
 # ===============================
 seed:
