@@ -4,5 +4,5 @@ export interface LoginDto {
 }
 
 export interface LoginResponse {
-  access_token: string;
+  accessToken: string;
 }

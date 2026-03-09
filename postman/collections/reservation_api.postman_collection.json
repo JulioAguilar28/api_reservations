@@ -1,0 +1,83 @@
+{
+  "info": {
+    "_postman_id": "54f6f68c-92cb-43ac-82ed-d4df35c40997",
+    "name": "reservation_api",
+    "description": "API collection for reservation system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Login",
+          "id": "b6d9c37e-4f88-40c3-9cd9-c97ab126b8b7",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan.admin@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "089d2948-847f-4b73-ba1f-8e47cb198c71"
+    },
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "Create User",
+          "id": "d048a832-b33a-475b-ade0-56c6dba2344a",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Juan Admin\",\n  \"email\": \"juan.admin@example.com\",\n  \"phone\": \"5511111111\",\n  \"roleId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "07003fce-efbc-424f-957f-733923291b9b"
+    }
+  ],
+  "variable": [
+    {
+      "id": "01946045-636c-4057-88ba-0d6bdc5bedb9",
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}

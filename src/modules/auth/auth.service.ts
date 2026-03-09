@@ -43,8 +43,8 @@ export class AuthService {
       role: user.role,
     };
 
-    const access_token = this.jwtService.sign(payloadToken);
+    const accessToken = this.jwtService.sign(payloadToken);
 
-    return { access_token };
+    return { accessToken };
   }
 }
