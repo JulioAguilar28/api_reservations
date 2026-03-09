@@ -9,6 +9,21 @@ import { AuthRepository } from './auth.repository';
 import { LoginValidator } from './auth.validators';
 import type { LoginDto, LoginResponse } from './auth.types';
 
+export interface JwtPayload {
+  sub: string;
+  email: string;
+  role: string;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  role: { name: string };
+  createdAt: Date;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,20 +46,33 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      (user as any).password,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payloadToken = {
+    const payloadToken: JwtPayload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: (user.role as any).name,
     };
 
-    const accessToken = this.jwtService.sign(payloadToken);
+    const access_token = this.jwtService.sign(payloadToken);
 
-    return { accessToken };
+    return { access_token };
+  }
+
+  async getProfile(userId: string): Promise<UserProfile> {
+    const user = await this.authRepository.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return user as UserProfile;
   }
 }

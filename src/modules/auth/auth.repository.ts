@@ -17,4 +17,22 @@ export class AuthRepository {
       },
     });
   }
+
+  findById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        phone: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
+        createdAt: true,
+      },
+    });
+  }
 }
